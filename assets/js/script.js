@@ -1,18 +1,22 @@
-var foodTypeEl = document.querySelector('#filter-food-options');
-var userLocationEl = document.querySelector('#location-filter');
-var pricesEl = document.querySelector('#filter-div-prices');
+// dotenv doesnt work on static pages apparently
+// require('dotenv').config();
+
+const foodTypeEl = document.querySelector('#filter-food-options');
+const userLocationEl = document.querySelector('#location-filter');
+const pricesEl = document.querySelector('#filter-div-prices');
 //
 // let submitFormEl = document.getElementById('modal-form');
-var searchBtnEl = document.querySelector('#search-button');
-var favouritesEl = document.querySelector('#favourites-list');
-var searchResultsEl = document.querySelector('#search-results');
-var favouriteArr = JSON.parse(localStorage.getItem('favouriteArr')) || [];
+const searchBtnEl = document.querySelector('#search-button');
+const favouritesEl = document.querySelector('#favourites-list');
+const searchResultsEl = document.querySelector('#search-results');
+const favouriteArr = JSON.parse(localStorage.getItem('favouriteArr')) || [];
 // google maps places & details api key
-var apiKey = 'AIzaSyBWAZHdf5zRqq6liQdqOjUEEIqyxkdDzAc'
+const apiKey = process.env.GOOGLE_KEY;
 // api documentation
 // https://developers.google.com/maps/documentation/places/web-service/search-find-place
 // https://developers.google.com/maps/documentation/places/web-service/details
 
+const proxyurl = "https://cors-anywhere.herokuapp.com/";
 
 // use place search to get a place_id from a general query, then place details for details on that id
 // var query = 'indian%20food';
@@ -22,8 +26,7 @@ var apiKey = 'AIzaSyBWAZHdf5zRqq6liQdqOjUEEIqyxkdDzAc'
 
 // fetches place_id s when given a querry and calls the location details method
 function placeLocations(query) {
-    var url = 'https://maps.googleapis.com/maps/api/place/textsearch/json?query=' + query + '&key=AIzaSyBWAZHdf5zRqq6liQdqOjUEEIqyxkdDzAc';
-    var proxyurl = "https://cors-anywhere.herokuapp.com/";
+    let url = 'https://maps.googleapis.com/maps/api/place/textsearch/json?query=' + query + '&key=' + apiKey;
     // var locations = [];
     fetch(proxyurl + url)
         .then(function (response) {
@@ -32,7 +35,7 @@ function placeLocations(query) {
         })
         .then(function (data) {
             console.log(data);
-            for (var i = 0; i < data.results.length; i++) {
+            for (let i = 0; i < data.results.length; i++) {
                 // // locations.push(data.results[i].place_id);
                 // console.log('place id ' + i + ' :: ' + data.results[i].place_id);
                 locationDetails(data.results[i].place_id, i, 'gen');
@@ -48,12 +51,11 @@ function placeLocations(query) {
 // need to include at least one basic 'fields=' request or it returns all options
 
 // place_id = ChIJD_SfHlk5tokRjbCVXAaBy3A
-var idTest = 'ChIJD_SfHlk5tokRjbCVXAaBy3A';
+const idTest = 'ChIJD_SfHlk5tokRjbCVXAaBy3A';
 // this function fetches location details from a place_id and adds the required HTML elements to the page
 // id is required for the url to generate the details, index is to later append with a data-X attribute, location is to track if the function is being called to generate favourites or the basic search function.
 function locationDetails(id, index, location) {
-    var proxyurl = "https://cors-anywhere.herokuapp.com/";
-    var locationURL = 'https://maps.googleapis.com/maps/api/place/details/json?place_id=' + id + '&fields=formatted_address,business_status,icon,name,type,url,wheelchair_accessible_entrance&key=AIzaSyBWAZHdf5zRqq6liQdqOjUEEIqyxkdDzAc';
+    let locationURL = 'https://maps.googleapis.com/maps/api/place/details/json?place_id=' + id + '&fields=formatted_address,business_status,icon,name,type,url,wheelchair_accessible_entrance&key=' + apiKey;
     // does type contain resturant, is the buisness_status=true
     fetch(proxyurl + locationURL)
         .then(function (response) {
@@ -61,7 +63,7 @@ function locationDetails(id, index, location) {
         })
         .then(function (data) {
             // console.log(data);
-            var resturant = [data.result.name, data.result.formatted_address, data.result.icon, data.result.wheelchair_accessible_entrance, data.result.business_status, data.result.url];
+            let resturant = [data.result.name, data.result.formatted_address, data.result.icon, data.result.wheelchair_accessible_entrance, data.result.business_status, data.result.url];
             if (resturant[3]) {
                 resturant[3] = 'Yes';
             } else {
@@ -69,9 +71,9 @@ function locationDetails(id, index, location) {
             }
             // console.log('resturant: ' + resturant);
             // print details to the page, with an anchor link and favourite button
-            var li = document.createElement('li');
-            var btn = document.createElement('button');
-            var anchor = document.createElement('a');
+            let li = document.createElement('li');
+            let btn = document.createElement('button');
+            let anchor = document.createElement('a');
             li.textContent = 'Name: ' + resturant[0] +', '+ '\n Address: ' + resturant[1] + '\n Wheelchair Accessible: ' + resturant[3] +', '+ '\n Business Status: ' + resturant[4] +', Link: '+ '    ';
             anchor.textContent = 'Google Maps URL';
             anchor.setAttribute('href', resturant[5]);
@@ -109,7 +111,7 @@ function locationDetails(id, index, location) {
 // submitFormEl.addEventListener("submit", function (event) {
 searchBtnEl.addEventListener("click", function (event) {
 
-    var searchQuery = $('#search-bar').val();
+    let searchQuery = $('#search-bar').val();
 
     // if statements to check the checkboxes
     // if true add to query
@@ -139,7 +141,7 @@ searchBtnEl.addEventListener("click", function (event) {
     //     searchQuery = searchQuery.concat(locationTemp);
     // }
     if ($(userLocationEl).val() != '') {
-        var locationTemp = '%20' + $(userLocationEl).val().replace(' ', '%20');
+        let locationTemp = '%20' + $(userLocationEl).val().replace(' ', '%20');
         searchQuery = searchQuery.concat(locationTemp);
     }
 
@@ -176,26 +178,26 @@ searchBtnEl.addEventListener("click", function (event) {
 // add event listener to btn for fav add + delete
 document.addEventListener('click', function (event) {
     // get id from button parent
-    var indexGen = event.target.getAttribute('data-generated');
+    let indexGen = event.target.getAttribute('data-generated');
     if (indexGen == null){
     } else if (!isNaN(indexGen)){
         // push to array
-        var placeID = event.target.getAttribute('data-id');
+        let placeID = event.target.getAttribute('data-id');
         favouriteArr.push(placeID);
         // store locally
         localStorage.setItem('favouriteArr', JSON.stringify(favouriteArr));
     }
 
     // method to delete favourites
-    var indexFav = event.target.getAttribute('data-fav');
+    let indexFav = event.target.getAttribute('data-fav');
     if (indexFav == null){
     } else if (!isNaN(indexFav)){
         // empty ele from fav array
-        var placeID = event.target.getAttribute('data-id');
+        let placeID = event.target.getAttribute('data-id');
         // filter to remove the old id from the favourites array
             // favouriteArr = favouriteArr.filter(compare(favouriteItem, placeID));
-        var arrayTemp = [];
-        for (var i=0; i < favouriteArr.length; i++) {
+        let arrayTemp = [];
+        for (let i=0; i < favouriteArr.length; i++) {
             if (favouriteArr[i] != placeID){
                 arrayTemp.push(favouriteArr[i]);
             }
@@ -210,7 +212,7 @@ document.addEventListener('click', function (event) {
 
 // generate fav list
 function genFavs (favouriteArr) {
-    for (var i=0; i < favouriteArr.length; i++){
+    for (let i=0; i < favouriteArr.length; i++){
         locationDetails(favouriteArr[i], i, 'fav');
     }
 }
@@ -218,7 +220,7 @@ genFavs(favouriteArr);
 
 
 // // for modal window
-// var modalEl= document.getElementById('open-modal-button');
+// let modalEl= document.getElementById('open-modal-button');
 // modalEl.addEventListener('click', function () {
 //     $('#myModal').modal('show');
 // });
