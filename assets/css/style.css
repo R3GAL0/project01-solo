@@ -1,0 +1,47 @@
+/* Adds features to the button in the lists*/
+ul li button {
+    padding: 10px;
+    margin: 10px ;
+    border: 2px;
+    background-color: rgb(224, 139, 139);
+    display: block;
+}
+
+/*adds features to the headings */
+h3{
+    text-align: center;
+    font-size: 25px;
+    font-weight: 600;
+    color: black;
+    margin: 10px;
+
+}
+
+/*It give the search button margin and some features */
+button{
+    margin: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Added better separation of the main options with
+different features*/
+header,
+#filter-div-prices,
+#filter-food-options,
+#filter-options{
+margin: 0 30px;
+padding: 20px;
+}
+
+/*The list have the following features*/
+ul{
+    padding: 10px;
+    margin: 24px;
+    cursor: pointer;
+    font-size: 15px;
+    color: black;
+    list-style: square;
+    text-align: -webkit-center;
+
+}
