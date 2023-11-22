@@ -11,7 +11,10 @@ const favouritesEl = document.querySelector('#favourites-list');
 const searchResultsEl = document.querySelector('#search-results');
 const favouriteArr = JSON.parse(localStorage.getItem('favouriteArr')) || [];
 // google maps places & details api key
-const apiKey = process.env.GOOGLE_KEY;
+// import apiKey from './config.js';
+// const apiKey = require('./config.js');
+const apiKey = axios.get(window.apiKey)
+// const apiKey = process.env.GOOGLE_KEY;
 // api documentation
 // https://developers.google.com/maps/documentation/places/web-service/search-find-place
 // https://developers.google.com/maps/documentation/places/web-service/details
